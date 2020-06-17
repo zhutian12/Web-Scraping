@@ -1,0 +1,44 @@
+import packages
+conda install beautifulsoup4
+conda install lxml
+conda install selenium
+import bs4 
+from urllib.request import urlopen as ureq
+from bs4 import BeautifulSoup as soup
+
+my_url = 'https://www.newegg.com/Video-Cards-Video-Devices/Category/ID-38?Tpk=graphiccard'
+web_prc = ureq(my_url)
+#open up connection, grabbing contents from web
+page_html = web_prc.read()
+web_prc.close()
+#html parse
+page_soup = soup(page_html,"html.parser")
+containers = page_soup.findAll("div",{"class","item-container"})
+
+len(containers)
+containers[0]
+container  = containers[0]
+container.find("div","item-info").div.a.img["title"]
+title_container = container.findAll("a",{"class":"item-title"})[0].text
+title_container[0].text
+shipping_fee = container.findAll("li",{"class", "price-ship"})[0].text.strip()
+
+file_name = "product.csv"
+f = open(file_name, "w")
+header = "brand, product_name, shipping_cost\n"
+
+f.write(header)
+
+
+for container in containers:
+    brand = container.find("div","item-info").div.a.img["title"]
+    product_name = container.findAll("a",{"class":"item-title"})[0].text
+    shipping_cost = container.findAll("li",{"class", "price-ship"})[0].text.strip()
+    
+    print("Brand: " + brand)
+    print("Product_name: " + product_name )
+    print("Shipping_cost: " + shipping_cost)
+    
+    f.write(brand + "," + product_name.replace(",", "|") + "," + shipping_cost + "\n")
+
+f.close()
