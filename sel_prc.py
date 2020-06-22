@@ -33,4 +33,26 @@ comment_ids = []
 for i in ids:
     comment_ids.append(i.get_attribute('id'))
 
+print(comment_ids)
 
+comments_ = pd.DataFrame(columns = ['Dates', 'ID', 'Comments'])
+//*[@id="Comment_5733423"]/div/div[2]/div[1]/span[1]/a[2]
+
+file_name = "comments.csv"
+f = open(file_name,"w",newline = '')
+header = "Dates, ID, Comments\n"
+f.write(header)
+for ids in comment_ids:
+    user_ids = driver.find_elements_by_xpath(f'//*[@id="{ids}"]/div/div[2]/div[1]/span[1]/a[2]')[0]
+    ids_ = user_ids.text
+    
+    user_dates = driver.find_elements_by_xpath(f'//*[@id="{ids}"]/div/div[2]/div[2]/span/a/time')[0]
+    dates = user_dates.get_attribute('title')
+    
+    user_comments = driver.find_elements_by_xpath(f'//*[@id="{ids}"]/div/div[3]/div/div[1]')[0]
+    comments = user_comments.text
+    
+    comments_.loc[len(comments_)] = [dates,ids_,comments]
+    f.write(dates.replace(",","|") + "," + ids_ + "," + comments.replace(",","|").replace("."," ") + "\n")
+    
+f.close()
