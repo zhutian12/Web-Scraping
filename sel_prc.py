@@ -24,8 +24,6 @@ user_comment = driver.find_elements_by_xpath('//*[@id="Discussion_56846"]/div/di
 comment = user_comment.text
 
 #find all ids
-//*[@id="Comment_5772188"]/div
-
 ids = driver.find_elements_by_xpath('//*[contains(@id, "Comment_")]')
 
 comment_ids = []
@@ -35,24 +33,29 @@ for i in ids:
 
 print(comment_ids)
 
-comments_ = pd.DataFrame(columns = ['Dates', 'ID', 'Comments'])
-//*[@id="Comment_5733423"]/div/div[2]/div[1]/span[1]/a[2]
 
-file_name = "comments.csv"
-f = open(file_name,"w",newline = '')
-header = "Dates, ID, Comments\n"
-f.write(header)
+ids_ = []
+dates = []
+comments = []
+
 for ids in comment_ids:
     user_ids = driver.find_elements_by_xpath(f'//*[@id="{ids}"]/div/div[2]/div[1]/span[1]/a[2]')[0]
-    ids_ = user_ids.text
+    ids_.append(user_ids.text)
     
     user_dates = driver.find_elements_by_xpath(f'//*[@id="{ids}"]/div/div[2]/div[2]/span/a/time')[0]
-    dates = user_dates.get_attribute('title')
+    dates.append(user_dates.get_attribute('title'))
     
     user_comments = driver.find_elements_by_xpath(f'//*[@id="{ids}"]/div/div[3]/div/div[1]')[0]
-    comments = user_comments.text
+    comments.append(user_comments.text)
     
-    comments_.loc[len(comments_)] = [dates,ids_,comments]
-    f.write(dates.replace(",","|") + "," + ids_ + "," + comments.replace(",","|").replace("."," ") + "\n")
-    
-f.close()
+comments_ = pd.DataFrame({'Dates':dates, 
+                          'ID':ids_, 
+                          'Comments':comments})
+
+print(comments_.dtypes)
+print(comments_)
+comments_['Dates'] = comments_['Dates'].astype(str)
+comments_['ID'] = comments_['ID'].astype(str)
+comments_['Comments'] = comments_['Comments'].astype(str)
+comments_.to_csv('car_comments.csv')
+
