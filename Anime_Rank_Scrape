@@ -6,5 +6,55 @@ Created on Wed Jun 24 22:19:41 2020
 Web Screping for many pages
 @author: tianzhu
 """
+conda install beautifulsoup4
+#load package
+from bs4 import BeautifulSoup as soup
+import requests
+import pandas as pd
+from time import sleep
+from random import randint
+import numpy as np
 
 
+#get website 
+url = 'https://www.agefans.tv/rank'
+results = requests.get(url)
+
+#read by soup
+soup1 = soup(results.text, "html.parser")
+soup1.findAll("span", class_ = "rank_text_name")[0].text
+
+anime_name = []
+
+for names in containers:
+    anime = names.a.span.text
+    anime_name.append(anime)
+
+anime_table = pd.DataFrame({"Anime_name":anime_name})
+
+anime_table.to_csv("anime.csv", encoding = "utf_8_sig")
+import os
+os.chdir("desktop/Python")
+print(anime_table.dtypes)
+
+
+#multiple pages scrape
+pages = np.arange(1,3,1) 
+
+for page in pages:
+    
+    page_a = requests.get("https://www.agefans.tv/rank?tag=catyear&value=&page="+ str(page) +"")
+    
+    soup_a = soup(page_a.text, "html.parser")
+    
+    containers = soup_a.findAll("span", class_ = "rank_text_name")
+                          
+    sleep(randint(2,10))
+
+anime_name = []
+for name_a in contain_all:
+    
+    
+    all_name = contain_all.text
+    
+    anime_name.append(all_name)
