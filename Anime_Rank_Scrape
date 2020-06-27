@@ -39,7 +39,8 @@ print(anime_table.dtypes)
 
 
 #multiple pages scrape
-pages = np.arange(1,3,1) 
+pages = np.arange(1,36,1) 
+anime_name = []
 
 for page in pages:
     
@@ -51,10 +52,13 @@ for page in pages:
                           
     sleep(randint(2,10))
 
-anime_name = []
-for name_a in contain_all:
+
+    for name_a in containers:
     
     
-    all_name = contain_all.text
+        all_name = name_a.text
     
-    anime_name.append(all_name)
+        anime_name.append(all_name)
+
+all_anime = pd.DataFrame({"Anime_Name": anime_name})
+all_anime.to_csv("all_anime_name.csv", encoding = "utf_8_sig")
